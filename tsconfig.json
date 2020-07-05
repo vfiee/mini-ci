@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "esnext",
+    "lib": ["ESNext"],
+    "strict": true,
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "noUnusedLocals": true,
+    "outDir": "dist/lib",
+    "typeRoots": ["node_modules/@types"]
+  },
+  "include": ["src"]
+}

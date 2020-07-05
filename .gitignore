@@ -1,0 +1,15 @@
+# Logs
+*.log
+*.log*
+
+# Node
+dist
+node_modules
+
+# Vscode
+.vscode
+
+
+# yarn
+*.lock
+*lock.json
