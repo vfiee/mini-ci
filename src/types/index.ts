@@ -19,3 +19,8 @@ export interface ProjectOption {
   projectPath: string;
   privateKey: string;
 }
+
+export interface Args {
+  _: string[];
+  [key: string]: string | boolean | string[];
+}

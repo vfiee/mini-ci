@@ -2,26 +2,12 @@
   "project": {
     "appid": "wx0df9772cfefcaf45",
     "type": "miniProgram",
-    "projectPath": "~/Work/zhen22-loan-calculator/dist"
+    "projectPath": "/Users/vyron/Work/zhen22-loan-calculator/dist",
+    "privateKeyPath": "/Users/vyron/Work/zhen22-loan-calculator/mini.key"
   },
   "upload": {
     "version": "1.4.0",
     "desc": "描述",
-    "setting": {
-      "es6": false,
-      "es7": false,
-      "minify": false,
-      "codeProtect": false,
-      "minifyJS": false,
-      "minifyWXML": false,
-      "minifyWXSS": false,
-      "autoPrefixWXSS": false
-    },
-    "robot": 1,
-    "test": true,
-    "qrcodeFormat": "terminal",
-    "qrcodeOutputDest": "./",
-    "pagePath": "./",
-    "searchQuery": "./"
+    "test": true
   }
 }

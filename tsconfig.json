@@ -3,7 +3,7 @@
     "module": "esnext",
     "target": "esnext",
     "lib": ["ESNext"],
-    "strict": true,
+    "strict": false,
     "sourceMap": true,
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",

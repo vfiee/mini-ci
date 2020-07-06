@@ -1,16 +1,18 @@
 import {
-  CreateProjectOption,
   configOptions,
+  CreateProjectOption,
   CreateUploadOption,
 } from "../types/config";
 import chalk from "chalk";
+import { ParsedArgs } from "minimist";
 
 class Config {
   path: string;
   project: CreateProjectOption;
   upload: CreateUploadOption;
-  constructor(path?: string) {
-    this.path = path || `${process.cwd()}/mini-ci.json`;
+  constructor(config: ParsedArgs) {
+    let { file, f } = config;
+    this.path = file || f || `${process.cwd()}/mini-ci.json`;
     let { project, upload } = this.getConfig();
     this.project = project;
     this.upload = upload;

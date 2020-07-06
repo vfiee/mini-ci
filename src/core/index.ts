@@ -16,8 +16,8 @@ const args = minimist(argv);
 let command = args._[0];
 const pkg_path = path.resolve(__dirname, "../package.json");
 const pkg = require(pkg_path);
-const { help: v_help, h, _, version, v, path: v_Path } = args;
-const config = new Config(v_Path);
+const { help: v_help, h, _, version, v } = args;
+const config = new Config(args);
 
 export default () => {
   const actionMap: ActionMap = {
@@ -36,7 +36,7 @@ export default () => {
     (v_help || h || _.length === 0) && (command = "help");
   }
   !!command &&
-    get(actionMap, command, () => commandNotFound(command))(args, config);
+    get(actionMap, command, () => commandNotFound(command))(config, args);
 };
 
 function logVersion() {

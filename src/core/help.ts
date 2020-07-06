@@ -1,6 +1,6 @@
 function logHelp() {
   console.log(`
-Usage: mini-ci [command] [args] [--options]
+Usage: mini-ci [command]  [--options]
 
 Commands:
   mini-ci                      显示帮助文档.
@@ -14,6 +14,8 @@ Commands:
 Options:
   --help, -h                   显示帮助文档.
   --version, -v                显示mini-ci版本.
+  --file, -f                   指定配置文件路径,如果未指定,默认取当前工作目录下的
+                               mini-ci.json 文件.
 `);
 }
 
