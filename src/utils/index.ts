@@ -36,3 +36,31 @@ export function get(
   }
   return result === undefined ? defValue : result;
 }
+
+export function getLocalDate(): string {
+  let date = new Date();
+  let year = date.getFullYear(),
+    month = date.getMonth(),
+    day = date.getDate(),
+    hours = date.getHours(),
+    minutes = date.getMinutes(),
+    seconds = date.getSeconds();
+  return (
+    year +
+    `-` +
+    prefixNum(month) +
+    `-` +
+    prefixNum(day) +
+    " " +
+    prefixNum(hours) +
+    ":" +
+    prefixNum(minutes) +
+    ":" +
+    prefixNum(seconds)
+  );
+}
+
+function prefixNum(value: number, len: number = 2): string {
+  let diff: number = len - value.toString().length;
+  return diff > 0 ? `${"0".repeat(diff)}${value}` : value.toString();
+}

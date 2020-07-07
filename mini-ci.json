@@ -6,8 +6,6 @@
     "privateKeyPath": "/Users/vyron/Work/zhen22-loan-calculator/mini.key"
   },
   "upload": {
-    "version": "1.4.0",
-    "desc": "描述",
-    "test": true
+    "version": "1.4.0"
   }
 }

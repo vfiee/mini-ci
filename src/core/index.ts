@@ -28,11 +28,11 @@ export default () => {
     preview,
     sourcemap,
   };
+  if (version | v) {
+    logVersion();
+    return;
+  }
   if (!command) {
-    if (version | v) {
-      logVersion();
-      return;
-    }
     (v_help || h || _.length === 0) && (command = "help");
   }
   !!command &&
@@ -40,7 +40,7 @@ export default () => {
 };
 
 function logVersion() {
-  console.log(chalk.yellow(`🥁mini-ci v${pkg.version}`));
+  console.log(chalk.yellow(` 🥁 mini-ci v${pkg.version}`));
 }
 
 function commandNotFound(cmd: string) {

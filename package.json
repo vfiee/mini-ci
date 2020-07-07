@@ -16,18 +16,20 @@
     "@rollup/plugin-commonjs": "^13.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^8.1.0",
+    "@types/minimist": "^1.2.0",
+    "rimraf": "^3.0.2",
     "rollup": "^2.19.0",
+    "rollup-plugin-auto-external": "^2.0.0",
     "rollup-plugin-sourcemaps": "^0.6.2",
     "rollup-plugin-typescript2": "^0.27.1",
     "typescript": "^3.9.6"
   },
   "scripts": {
-    "pre-build": "rm -rf dist",
+    "pre-build": "rimraf dist",
     "dev": "yarn pre-build && rollup -c rollup.config.ts -w",
     "build": "yarn pre-build && tsc -m commonjs && rollup -c rollup.config.ts"
   },
   "dependencies": {
-    "@types/minimist": "^1.2.0",
     "chalk": "^4.1.0",
     "minimist": "^1.2.5",
     "miniprogram-ci": "^1.0.45",

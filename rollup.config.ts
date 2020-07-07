@@ -3,6 +3,7 @@ import resolve from "@rollup/plugin-node-resolve";
 import sourcemap from "rollup-plugin-sourcemaps";
 import typescript from "rollup-plugin-typescript2";
 import common from "@rollup/plugin-commonjs";
+import autoExternal from "rollup-plugin-auto-external";
 const pkg = require("./package.json");
 
 const banner = `/*!
@@ -25,6 +26,7 @@ export default {
   exclude: ["node_modules"],
   plugins: [
     json(),
+    autoExternal(),
     resolve(),
     sourcemap(),
     common(),
