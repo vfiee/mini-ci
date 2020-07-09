@@ -1,6 +1,6 @@
 import { Project } from "miniprogram-ci";
-import { CreateProjectOption } from "../types";
-function createProject(option: CreateProjectOption): Project {
+import { ProjectOptions } from "../types";
+function createProject(option: ProjectOptions): Project {
   return new Project(option);
 }
 

@@ -1,26 +1,39 @@
 import {
-  configOptions,
-  CreateProjectOption,
-  CreateUploadOption,
+  ConfigOptions,
+  BaseObject,
+  ProjectOptions,
+  UploadOptions,
 } from "../types";
 import chalk from "chalk";
+import path from "path";
+import fs from "fs";
 import { ParsedArgs } from "minimist";
-import { BaseObject } from "../types";
+import { getValueByKeys, getUserHomeDir, getLocalDate, get } from "../utils";
 
 class Config {
-  path: string;
-  project: CreateProjectOption;
-  upload: CreateUploadOption;
-  config: BaseObject;
-  constructor(config: ParsedArgs) {
-    let { file, f } = config;
-    this.path = file || f || `${process.cwd()}/mini-ci.json`;
-    let { project, upload } = this.getConfig(config);
-    this.project = project;
-    this.upload = upload;
+  private path: string;
+  private envArgs: ParsedArgs;
+  config: ConfigOptions;
+  constructor(envArgs: ParsedArgs) {
+    this.envArgs = envArgs;
+    this.path = this.getPath();
+    this.config = this.getConfig();
   }
-  private getConfig(args: ParsedArgs): configOptions {
-    let config: configOptions;
+  private getPath(isRoot: boolean = false): string {
+    const userHome = getUserHomeDir();
+    if (isRoot) return userHome;
+    let { file, f } = this.envArgs;
+    const cwd = process.cwd();
+    const projectConfig = `${cwd}/mini-ci.json`;
+    if (file || f) {
+      return path.resolve(cwd, file || f);
+    } else if (fs.existsSync(projectConfig)) {
+      return projectConfig;
+    }
+    return userHome;
+  }
+  private getConfig(): ConfigOptions {
+    let config: BaseObject;
     try {
       config = require(this.path);
     } catch (error) {
@@ -30,98 +43,87 @@ class Config {
       );
       process.exit(1);
     }
-    let { project = {}, upload = {} } = config;
-    config.project = {
-      ...project,
-      ...this.getProjectEnv(args),
-    } as CreateProjectOption;
-    config.upload = {
-      ...upload,
-      ...this.getUploadOrPreviewEnv(args),
-    } as CreateUploadOption;
-    return config;
+    return this.mergeConfig(config);
   }
-  private getProjectEnv(project): object {
-    let {
-      appid,
-      id,
-      projectPath,
-      proPath,
-      privateKeyPath,
-      priPath,
-      type,
-      t,
-      ignores,
-      ig,
-    } = project;
-    return this.getBaseEnv({
-      type: type || t,
-      appid: appid || id,
-      ignores: ignores || ig,
-      projectPath: projectPath || proPath,
-      privateKeyPath: privateKeyPath || priPath,
-    });
+  private mergeConfig(config: BaseObject): ConfigOptions {
+    const project = this.getProjectConfig(config);
+    const upload = this.getUploadConfig(config);
+    return { project, upload };
   }
-  private getUploadOrPreviewEnv(upload): object {
-    let {
-      // 上传配置
-      ver: version,
-      desc,
-      d,
-      robot,
-      r,
-      test,
-      qrcodeFormat,
-      qrf,
-      qrcodeOutputDest,
-      qro,
-      pagePath,
-      searchQuery,
-      sq,
-      es6,
-      es7,
-      minify,
-      codeProtect,
-      minifyJS,
-      minifyWXML,
-      minifyWXSS,
-      autoPrefixWXSS,
-    } = upload;
-    return this.getBaseEnv({
-      test,
-      version,
-      pagePath,
-      desc: desc || d,
-      robot: robot || r,
-      searchQuery: searchQuery || sq,
-      qrcodeFormat: qrcodeFormat || qrf,
-      qrcodeOutputDest: qrcodeOutputDest || qro,
-      setting: {
-        es6: !!es6,
-        es7: !!es7,
-        minify: !!minify,
-        codeProtect: !!codeProtect,
-        minifyJS: !!minifyJS,
-        minifyWXML: !!minifyWXML,
-        minifyWXSS: !!minifyWXSS,
-        autoPrefixWXSS: !!autoPrefixWXSS,
+  private getProjectConfig(config: BaseObject): ProjectOptions {
+    let { project } = config;
+    return Object.assign(
+      {},
+      this.getDefProjectCof(),
+      project,
+      getValueByKeys(this.envArgs, [
+        ["appid", "id"],
+        ["projectPath", "proPath"],
+        ["privateKeyPath", "priPath"],
+        ["type", "t"],
+        ["ignore", "ig"],
+      ])
+    );
+  }
+  private getUploadConfig(config: BaseObject): UploadOptions {
+    let { setting = {}, ...args } = get(config, "upload", {});
+    let res = Object.assign(
+      {},
+      this.getDefUploadConf(),
+      {
+        ...args,
+        setting: {
+          ...setting,
+          ...getValueByKeys(this.envArgs, [
+            "es6",
+            "es7",
+            "minify",
+            "codeProtect",
+            "minifyJS",
+            "minifyWXML",
+            "minifyWXSS",
+            "autoPrefixWXSS",
+          ]),
+        },
       },
-    });
+      getValueByKeys(this.envArgs, [
+        "ver",
+        "test",
+        ["desc", "d"],
+        ["robot", "r"],
+      ])
+    );
+    console.log(this.getDefUploadConf());
+    console.log(setting);
+    console.log(
+      getValueByKeys(this.envArgs, [
+        "es6",
+        "es7",
+        "minify",
+        "codeProtect",
+        "minifyJS",
+        "minifyWXML",
+        "minifyWXSS",
+        "autoPrefixWXSS",
+      ])
+    );
+    console.log(
+      getValueByKeys(this.envArgs, [
+        "ver",
+        "test",
+        ["desc", "d"],
+        ["robot", "r"],
+      ])
+    );
+    return res;
   }
-  private getBaseEnv(obj: object): object {
-    let keys = Object.keys(obj);
-    if (!keys.length) return {};
-    for (let i = 0, len = keys.length; i < len; i++) {
-      let curr = obj[keys[i]];
-      if (typeof curr === "object" && !Array.isArray(curr)) {
-        this.getBaseEnv(curr);
-        continue;
-      }
-      if (obj[keys[i]] === undefined) {
-        delete obj[keys[i]];
-      }
-    }
-    return obj;
+  private getDefProjectCof(): BaseObject {
+    return {};
+  }
+  private getDefUploadConf(): BaseObject {
+    return {
+      desc: getLocalDate() + " 上传",
+    };
   }
 }
 

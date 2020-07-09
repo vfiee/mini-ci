@@ -4,7 +4,6 @@ import Config from "./config";
 import ora, { Ora } from "ora";
 import chalk from "chalk";
 import { ParsedArgs } from "minimist";
-import { getLocalDate } from "../utils";
 
 const spinnerMap: Map<string, Ora> = new Map();
 function onProgressUpdate(progress: MiniProgramCI.ITaskStatus): void {
@@ -21,12 +20,9 @@ function onProgressUpdate(progress: MiniProgramCI.ITaskStatus): void {
   }
 }
 
-function upload(config: Config) {
-  let { project, upload } = config;
+function upload(confIns: Config) {
+  let { project, upload } = confIns.config;
   const mini_project = createProject(project);
-  if (!upload.desc) {
-    upload.desc = `${getLocalDate()} 上传`;
-  }
   const spinner = ora().start(chalk.yellow(`项目上传中... \n`));
   mini_upload({
     project: mini_project,

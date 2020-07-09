@@ -13,3 +13,6 @@ node_modules
 # yarn
 *.lock
 *lock.json
+
+# dev-test
+*ci.json

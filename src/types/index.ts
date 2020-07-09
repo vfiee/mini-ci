@@ -6,31 +6,12 @@ export interface BaseObject {
   [key: string]: any;
 }
 
-export enum ProjectType {
-  miniGame = "miniGame",
-  miniProgram = "miniProgram",
-  miniGamePlugin = "miniGamePlugin",
-  miniProgramPlugin = "miniProgramPlugin",
+export interface ConfigOptions {
+  project: ProjectOptions;
+  upload: UploadOptions;
 }
 
-export interface ProjectOption {
-  appid: string;
-  type: ProjectType;
-  projectPath: string;
-  privateKey: string;
-}
-
-export interface Args {
-  _: string[];
-  [key: string]: string | boolean | string[];
-}
-
-export interface configOptions {
-  project: CreateProjectOption;
-  upload: CreateUploadOption;
-}
-
-export interface CreateProjectOption {
+export interface ProjectOptions {
   appid: string;
   ignores?: string[];
   projectPath: string;
@@ -48,7 +29,7 @@ export interface MiniCompileOption {
   minifyWXSS?: boolean;
   autoPrefixWXSS?: boolean;
 }
-export interface CreateUploadOption {
+export interface UploadOptions {
   version: string;
   setting?: MiniCompileOption;
   desc?: string;
@@ -86,8 +67,4 @@ export interface CreateUploadOption {
     | 30;
   // onProgressUpdate?: (task: MiniProgramCI.ITaskStatus | string) => void;
   test?: boolean;
-  qrcodeFormat?: "base64" | "image" | "terminal";
-  qrcodeOutputDest?: string;
-  pagePath?: string;
-  searchQuery?: string;
 }
