@@ -22,8 +22,6 @@ export default {
     name: pkg.name,
   },
   external: ["miniprogram-ci", "path", "tty", "os"],
-  include: ["src"],
-  exclude: ["node_modules"],
   plugins: [
     json(),
     autoExternal(),
