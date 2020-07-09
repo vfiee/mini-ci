@@ -172,3 +172,5 @@ export function getUserHomeDir(): string {
   }
   return typeof os.homedir === "function" ? os.homedir() : homedir();
 }
+
+export function voidFn(): void {}

@@ -3,6 +3,7 @@ import {
   BaseObject,
   ProjectOptions,
   UploadOptions,
+  PreviewOptions,
 } from "../types";
 import chalk from "chalk";
 import path from "path";
@@ -13,18 +14,28 @@ import { getValueByKeys, getUserHomeDir, getLocalDate, get } from "../utils";
 class Config {
   private path: string;
   private envArgs: ParsedArgs;
-  config: ConfigOptions;
+  public config: ConfigOptions;
   constructor(envArgs: ParsedArgs) {
     this.envArgs = envArgs;
     this.path = this.getPath();
     this.config = this.getConfig();
+  }
+  get cwd() {
+    return process.cwd();
+  }
+  get baseConfig(): BaseObject {
+    return Object.assign(
+      {},
+      this.getDefBaseConf(),
+      getValueByKeys(this.envArgs, [["showStatusLog", "sl"]])
+    );
   }
   private getPath(isRoot: boolean = false): string {
     const userHome = getUserHomeDir();
     if (isRoot) return userHome;
     let { file, f } = this.envArgs;
     const cwd = process.cwd();
-    const projectConfig = `${cwd}/mini-ci.json`;
+    const projectConfig = `${this.cwd}/mini-ci.json`;
     if (file || f) {
       return path.resolve(cwd, file || f);
     } else if (fs.existsSync(projectConfig)) {
@@ -48,7 +59,8 @@ class Config {
   private mergeConfig(config: BaseObject): ConfigOptions {
     const project = this.getProjectConfig(config);
     const upload = this.getUploadConfig(config);
-    return { project, upload };
+    const preview = this.getPreviewConfig(config);
+    return { project, upload, preview };
   }
   private getProjectConfig(config: BaseObject): ProjectOptions {
     let { project } = config;
@@ -66,7 +78,7 @@ class Config {
     );
   }
   private getUploadConfig(config: BaseObject): UploadOptions {
-    let { setting = {}, ...args } = get(config, "upload", {});
+    const { setting = {}, ...args } = get(config, "upload", {});
     return Object.assign(
       {},
       this.getDefUploadConf(),
@@ -94,12 +106,63 @@ class Config {
       ])
     );
   }
+  private getPreviewConfig(config: BaseObject): PreviewOptions {
+    const { setting = {}, ...args } = get(config, "upload", {});
+    return Object.assign(
+      {},
+      this.getDefPreviewConf(),
+      {
+        ...args,
+        setting: {
+          ...setting,
+          ...getValueByKeys(this.envArgs, [
+            "es6",
+            "es7",
+            "minify",
+            "codeProtect",
+            "minifyJS",
+            "minifyWXML",
+            "minifyWXSS",
+            "autoPrefixWXSS",
+          ]),
+        },
+      },
+      getValueByKeys(this.envArgs, [
+        ["desc", "d"],
+        ["robot", "r"],
+        ["qrcodeFormat", "qrFormat", "qrf"],
+        ["qrcodeOutputDest", "qrDest", "qrd"],
+        ["pagePath", "pp", "p"],
+        ["searchQuery", "sq", "q"],
+      ])
+    );
+  }
   private getDefProjectCof(): BaseObject {
-    return {};
+    return {
+      type: "miniProgram",
+    };
   }
   private getDefUploadConf(): BaseObject {
     return {
+      robot: 1,
       desc: getLocalDate() + " 上传",
+    };
+  }
+  private getDefPreviewConf(): BaseObject {
+    let { qrcodeFormat } = getValueByKeys(this.envArgs, [
+      ["qrcodeFormat", "qrFormat", "qrf"],
+    ]);
+    let isBase64 = qrcodeFormat === "base64";
+    return {
+      robot: 1,
+      qrcodeFormat: "terminal",
+      desc: getLocalDate() + " 预览",
+      qrcodeOutputDest: `${this.cwd}/preview${isBase64 ? "" : ".jpg"}`,
+    };
+  }
+  private getDefBaseConf(): BaseObject {
+    return {
+      showStatusLog: false,
     };
   }
 }

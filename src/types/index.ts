@@ -9,13 +9,15 @@ export interface BaseObject {
 export interface ConfigOptions {
   project: ProjectOptions;
   upload: UploadOptions;
+  preview: PreviewOptions;
+  showStatusLog?: boolean;
 }
 
 export interface ProjectOptions {
   appid: string;
   ignores?: string[];
   projectPath: string;
-  privateKeyPath?: string;
+  privateKeyPath: string;
   type: "miniProgram" | "miniProgramPlugin" | "miniGame" | "miniGamePlugin";
 }
 
@@ -29,10 +31,10 @@ export interface MiniCompileOption {
   minifyWXSS?: boolean;
   autoPrefixWXSS?: boolean;
 }
-export interface UploadOptions {
+interface BaseOptions {
   version: string;
-  setting?: MiniCompileOption;
   desc?: string;
+  setting?: MiniCompileOption;
   robot?:
     | 0
     | 1
@@ -65,6 +67,15 @@ export interface UploadOptions {
     | 28
     | 29
     | 30;
-  // onProgressUpdate?: (task: MiniProgramCI.ITaskStatus | string) => void;
+}
+
+export interface UploadOptions extends BaseOptions {
   test?: boolean;
+}
+
+export interface PreviewOptions extends BaseOptions {
+  pagePath?: string;
+  searchQuery: string;
+  qrcodeOutputDest: string;
+  qrcodeFormat: "terminal" | "image" | "base64";
 }
