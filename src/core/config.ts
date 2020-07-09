@@ -67,7 +67,7 @@ class Config {
   }
   private getUploadConfig(config: BaseObject): UploadOptions {
     let { setting = {}, ...args } = get(config, "upload", {});
-    let res = Object.assign(
+    return Object.assign(
       {},
       this.getDefUploadConf(),
       {
@@ -93,29 +93,6 @@ class Config {
         ["robot", "r"],
       ])
     );
-    console.log(this.getDefUploadConf());
-    console.log(setting);
-    console.log(
-      getValueByKeys(this.envArgs, [
-        "es6",
-        "es7",
-        "minify",
-        "codeProtect",
-        "minifyJS",
-        "minifyWXML",
-        "minifyWXSS",
-        "autoPrefixWXSS",
-      ])
-    );
-    console.log(
-      getValueByKeys(this.envArgs, [
-        "ver",
-        "test",
-        ["desc", "d"],
-        ["robot", "r"],
-      ])
-    );
-    return res;
   }
   private getDefProjectCof(): BaseObject {
     return {};
