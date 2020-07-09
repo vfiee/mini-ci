@@ -17,7 +17,6 @@ let command = args._[0];
 const pkg_path = path.resolve(__dirname, "../package.json");
 const pkg = require(pkg_path);
 const { help: v_help, h, _, version, v } = args;
-const config = new Config(args);
 
 export default () => {
   const actionMap: ActionMap = {
@@ -35,6 +34,7 @@ export default () => {
   if (!command) {
     (v_help || h || _.length === 0) && (command = "help");
   }
+  const config = new Config(args);
   !!command &&
     get(actionMap, command, () => commandNotFound(command))(config, args);
 };

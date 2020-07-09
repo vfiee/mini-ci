@@ -1,3 +1,3 @@
-import init from "./core/index";
+import init from "./core";
 
 init();
