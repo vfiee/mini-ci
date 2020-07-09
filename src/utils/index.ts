@@ -51,7 +51,7 @@ export function get(
 export function getLocalDate(): string {
   let date = new Date();
   let year = date.getFullYear(),
-    month = date.getMonth(),
+    month = date.getMonth() + 1,
     day = date.getDate(),
     hours = date.getHours(),
     minutes = date.getMinutes(),
@@ -126,9 +126,6 @@ export function getValueByKeys(
       return res;
     }
     if (value.hasOwnProperty(key as string)) {
-      if (key === "r") {
-        console.log(value[key as string]);
-      }
       filterFn(value[key as string]) &&
         (res[key as string] = value[key as string]);
     }
