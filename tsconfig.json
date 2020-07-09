@@ -6,6 +6,7 @@
     "strict": false,
     "sourceMap": true,
     "allowSyntheticDefaultImports": true,
+    "declaration": true,
     "moduleResolution": "node",
     "noUnusedLocals": true,
     "outDir": "dist/lib",
