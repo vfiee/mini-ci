@@ -16,3 +16,8 @@ node_modules
 
 # dev-test
 *ci.json
+
+
+# mac
+*.DS_Store
+**/*.DS_Store

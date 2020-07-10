@@ -1,12 +1,12 @@
 import ora from "ora";
 import chalk from "chalk";
 import { preview as mini_preview } from "miniprogram-ci";
-import Config from "./config";
+import Config from "../config";
 import { ParsedArgs } from "minimist";
-import { getLocalDate, get, voidFn } from "../utils";
-import createProject from "./project";
+import { getLocalDate, get } from "../../utils";
+import createProject from "../project";
 import { onProgressUpdate } from "./upload";
-import { PreviewOptions } from "../types";
+import { PreviewOptions } from "../../types";
 
 function preview(confIns: Config): void {
   const { preview, project } = confIns.config;
@@ -14,13 +14,14 @@ function preview(confIns: Config): void {
   console.log(confIns.config);
   // return;
   const spinner = ora().start(chalk.yellow(`项目上传中... \n`));
-  const progressFn = !!confIns.baseConfig.showStatusLog
-    ? (eve) => onProgressUpdate(eve as MiniProgramCI.ITaskStatus)
-    : voidFn;
   mini_preview({
     project: mini_project,
     ...preview,
-    onProgressUpdate: progressFn,
+    onProgressUpdate: (eve) =>
+      onProgressUpdate(
+        eve as MiniProgramCI.ITaskStatus,
+        !!confIns.baseConfig.showStatusLog
+      ),
   })
     .then(() => {
       spinner.succeed(

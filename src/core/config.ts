@@ -4,6 +4,8 @@ import {
   ProjectOptions,
   UploadOptions,
   PreviewOptions,
+  BuildOptions,
+  SourceMapOptions,
 } from "../types";
 import chalk from "chalk";
 import path from "path";
@@ -60,7 +62,9 @@ class Config {
     const project = this.getProjectConfig(config);
     const upload = this.getUploadConfig(config);
     const preview = this.getPreviewConfig(config);
-    return { project, upload, preview };
+    const build = this.getBuildConfig(config);
+    const sourcemap = this.getSourcemapConfig(config);
+    return { project, upload, preview, build, sourcemap };
   }
   private getProjectConfig(config: BaseObject): ProjectOptions {
     let { project } = config;
@@ -73,7 +77,7 @@ class Config {
         ["projectPath", "proPath"],
         ["privateKeyPath", "priPath"],
         ["type", "t"],
-        ["ignore", "ig"],
+        ["ignores", "ig"],
       ])
     );
   }
@@ -137,6 +141,23 @@ class Config {
       ])
     );
   }
+  private getBuildConfig(config: BaseObject): BuildOptions {
+    return Object.assign(
+      {},
+      this.getDefBuildConf(),
+      getValueByKeys(this.envArgs, ["igno"])
+    );
+  }
+  private getSourcemapConfig(config: BaseObject): SourceMapOptions {
+    return Object.assign(
+      {},
+      this.getDefSourcemapConf(),
+      getValueByKeys(this.envArgs, [
+        ["robot", "r"],
+        ["sourceMapSavePath", "sp"],
+      ])
+    );
+  }
   private getDefProjectCof(): BaseObject {
     return {
       type: "miniProgram",
@@ -163,6 +184,15 @@ class Config {
   private getDefBaseConf(): BaseObject {
     return {
       showStatusLog: false,
+    };
+  }
+  private getDefBuildConf(): BaseObject {
+    return {};
+  }
+  private getDefSourcemapConf(): SourceMapOptions {
+    return {
+      robot: 1,
+      sourceMapSavePath: `${this.cwd}/sourcemap.zip`,
     };
   }
 }

@@ -1,13 +1,17 @@
 import { upload as mini_upload } from "miniprogram-ci";
-import createProject from "./project";
-import Config from "./config";
+import createProject from "../project";
+import Config from "../config";
 import ora, { Ora } from "ora";
 import chalk from "chalk";
 import { ParsedArgs } from "minimist";
-import { getLocalDate, voidFn } from "../utils";
+import { getLocalDate } from "../../utils";
 
 const spinnerMap: Map<string, Ora> = new Map();
-export function onProgressUpdate(progress: MiniProgramCI.ITaskStatus): void {
+export function onProgressUpdate(
+  progress: MiniProgramCI.ITaskStatus,
+  showLog: boolean = true
+): void {
+  if (!showLog) return;
   let { message, status, id } = progress;
   const spinner = spinnerMap.has(id)
     ? spinnerMap.get(id)
@@ -25,13 +29,14 @@ function upload(confIns: Config) {
   let { project, upload } = confIns.config;
   const mini_project = createProject(project);
   const spinner = ora().start(chalk.yellow(`项目上传中... \n`));
-  const progressFn = !!confIns.baseConfig.showStatusLog
-    ? (eve) => onProgressUpdate(eve as MiniProgramCI.ITaskStatus)
-    : voidFn;
   mini_upload({
     project: mini_project,
     ...upload,
-    onProgressUpdate: progressFn,
+    onProgressUpdate: (eve) =>
+      onProgressUpdate(
+        eve as MiniProgramCI.ITaskStatus,
+        !!confIns.baseConfig.showStatusLog
+      ),
   })
     .then(() => {
       spinner.succeed(

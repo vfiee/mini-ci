@@ -1,12 +1,12 @@
 import path from "path";
 import chalk from "chalk";
 import minimist from "minimist";
-import help from "./help";
-import build from "./build";
-import preview from "./preview";
-import proxy from "./proxy";
-import sourcemap from "./sourcemap";
-import upload from "./upload";
+import help from "./command/help";
+import build from "./command/build";
+import preview from "./command/preview";
+import proxy from "./command/proxy";
+import sourcemap from "./command/sourcemap";
+import upload from "./command/upload";
 import Config from "./config";
 import { ActionMap } from "../types";
 import { get } from "../utils";

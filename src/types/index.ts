@@ -10,6 +10,8 @@ export interface ConfigOptions {
   project: ProjectOptions;
   upload: UploadOptions;
   preview: PreviewOptions;
+  build: BuildOptions;
+  sourcemap: SourceMapOptions;
   showStatusLog?: boolean;
 }
 
@@ -31,42 +33,42 @@ export interface MiniCompileOption {
   minifyWXSS?: boolean;
   autoPrefixWXSS?: boolean;
 }
+type Robot =
+  | 1
+  | 2
+  | 3
+  | 4
+  | 5
+  | 6
+  | 7
+  | 8
+  | 9
+  | 10
+  | 11
+  | 12
+  | 13
+  | 14
+  | 15
+  | 16
+  | 17
+  | 18
+  | 19
+  | 20
+  | 21
+  | 22
+  | 23
+  | 24
+  | 25
+  | 26
+  | 27
+  | 28
+  | 29
+  | 30;
 interface BaseOptions {
   version: string;
   desc?: string;
   setting?: MiniCompileOption;
-  robot?:
-    | 0
-    | 1
-    | 2
-    | 3
-    | 4
-    | 5
-    | 6
-    | 7
-    | 8
-    | 9
-    | 10
-    | 11
-    | 12
-    | 13
-    | 14
-    | 15
-    | 16
-    | 17
-    | 18
-    | 19
-    | 20
-    | 21
-    | 22
-    | 23
-    | 24
-    | 25
-    | 26
-    | 27
-    | 28
-    | 29
-    | 30;
+  robot?: Robot;
 }
 
 export interface UploadOptions extends BaseOptions {
@@ -78,4 +80,13 @@ export interface PreviewOptions extends BaseOptions {
   searchQuery: string;
   qrcodeOutputDest: string;
   qrcodeFormat: "terminal" | "image" | "base64";
+}
+
+export interface BuildOptions {
+  ignores?: string[];
+}
+
+export interface SourceMapOptions {
+  robot: Robot;
+  sourceMapSavePath: string;
 }
