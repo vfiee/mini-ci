@@ -22,8 +22,11 @@ class Config {
     this.path = this.getPath();
     this.config = this.getConfig();
   }
-  get cwd() {
+  get cwd(): string {
     return process.cwd();
+  }
+  get rootPath(): string {
+    return "";
   }
   get baseConfig(): BaseObject {
     return Object.assign(

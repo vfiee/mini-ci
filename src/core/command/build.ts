@@ -18,14 +18,23 @@ function build(confIns: Config) {
   const { build, project } = confIns.config;
   const mini_project = createProject(project);
   const spinner = ora().start(chalk.yellow(`项目构建中... \n`));
-  mini_build(mini_project, build)
-    .then((res) => {
-      spinner.succeed(chalk.yellow(`项目构建成功`));
-      console.log(res);
+  let code;
+  mini_build(mini_project, {
+    ...build,
+    reporter: function (...args) {
+      console.log(`构建信息:`, ...args, "\n");
+    },
+  })
+    .then(() => {
+      code = 0;
+      spinner.succeed(chalk.yellow(`项目构建成功!`));
     })
     .catch((err) => {
+      code = 1;
       spinner.fail(chalk.red(`项目构建失败:${err} \n`));
-      process.exit(1);
+    })
+    .finally(() => {
+      process.exit(code);
     });
 }
 

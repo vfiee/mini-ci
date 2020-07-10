@@ -18,19 +18,23 @@ function sourcemap(confIns: Config) {
   const { sourcemap, project } = confIns.config;
   const mini_project = createProject(project);
   const spinner = ora().start(chalk.yellow(`拉取sourcemap中... \n`));
+  let code: number;
   mini_sourcemap({
     project: mini_project,
     ...sourcemap,
   })
     .then(() => {
+      code = 0;
       spinner.succeed(
         chalk.yellow(`ourcemap拉取成功! 路径:${confIns.cwd}/sourcemap.zip`)
       );
-      process.exit(0);
     })
     .catch((err) => {
+      code = 1;
       spinner.fail(chalk.red(`sourcemap拉取失败:${err} \n`));
-      process.exit(1);
+    })
+    .finally(() => {
+      process.exit(code);
     });
 }
 

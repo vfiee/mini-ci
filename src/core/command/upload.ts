@@ -29,6 +29,7 @@ function upload(confIns: Config) {
   let { project, upload } = confIns.config;
   const mini_project = createProject(project);
   const spinner = ora().start(chalk.yellow(`项目上传中... \n`));
+  let code: number;
   mini_upload({
     project: mini_project,
     ...upload,
@@ -39,14 +40,17 @@ function upload(confIns: Config) {
       ),
   })
     .then(() => {
+      code = 0;
       spinner.succeed(
         chalk.green(`项目上传成功! 点击查看: https://mp.weixin.qq.com \n`)
       );
-      process.exit(0);
     })
     .catch((err) => {
+      code = 1;
       spinner.fail(chalk.red(`项目上传失败:${err} \n`));
-      process.exit(1);
+    })
+    .finally(() => {
+      process.exit(code);
     });
 }
 
