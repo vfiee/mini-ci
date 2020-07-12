@@ -15,6 +15,10 @@ export interface ConfigOptions {
   showStatusLog?: boolean;
 }
 
+export interface GlobalConfig {
+  [key: string]: ConfigOptions | string;
+}
+
 export interface ProjectOptions {
   appid: string;
   ignores?: string[];
@@ -89,4 +93,8 @@ export interface BuildOptions {
 export interface SourceMapOptions {
   robot: Robot;
   sourceMapSavePath: string;
+}
+
+export interface ErrorOptions {
+  message: string;
 }

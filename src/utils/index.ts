@@ -1,5 +1,6 @@
 import os from "os";
-import { BaseObject } from "../types";
+import { BaseObject, ErrorOptions } from "../types";
+import chalk from "chalk";
 
 export const hasOwnProperty: Function = Object.prototype.hasOwnProperty;
 const propsReg: RegExp = /[^.[\]\s]+|\[\d+\]+/g;
@@ -27,20 +28,20 @@ function stringToPath(path: string): RegExpMatchArray {
 export function get(
   object: object | null,
   path: string | string[] = ``,
-  defValue: any
+  defValue?: any
 ): any {
   if (object == null || typeof object !== "object") return object || defValue;
   let paths: string[] = Array.isArray(path) ? path : stringToPath(path);
   let result: any = object;
   for (let i = 0, len = paths.length; i < len; i++) {
-    if (hasOwnProperty.call(result, paths[i])) {
+    if (result[paths[i]] !== void 0) {
       result = result[paths[i]];
       continue;
     }
-    result = undefined;
+    result = void 0;
     break;
   }
-  return result === undefined ? defValue : result;
+  return result === void 0 ? defValue : result;
 }
 
 /**
@@ -174,3 +175,8 @@ export function getUserHomeDir(): string {
 }
 
 export function voidFn(): void {}
+
+export function runError(opiton: ErrorOptions): void {
+  console.log(chalk.red(opiton.message));
+  process.exit(1);
+}

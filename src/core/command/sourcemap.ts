@@ -1,21 +1,12 @@
-import { ParsedArgs } from "minimist";
 import ora from "ora";
 import chalk from "chalk";
 import { getDevSourceMap as mini_sourcemap } from "miniprogram-ci";
-import Config from "../config";
+import { Config } from "./config";
 import createProject from "../project";
-
-function init(_: Config, args: ParsedArgs) {
-  let { help, h } = args;
-  if (help || h) {
-    logHelp();
-  } else {
-    sourcemap(_);
-  }
-}
 
 function sourcemap(confIns: Config) {
   const { sourcemap, project } = confIns.config;
+  console.log(confIns);
   const mini_project = createProject(project);
   const spinner = ora().start(chalk.yellow(`拉取sourcemap中... \n`));
   let code: number;
@@ -38,16 +29,16 @@ function sourcemap(confIns: Config) {
     });
 }
 
-function logHelp() {
+export function logHelp() {
   console.log(`
-Usage: mini-ci  sourmap  [--options]
+  Usage: mini-ci  sourmap  [--options]
 
-Options:
-  --help, -h                                显示帮助文档.
-  --version, -v                             显示mini-ci版本.
-  --robot,-r                                指定使用哪一个 ci 机器人，可选值：1 ~ 30 (默认: 1)
-  --sourceMapSavePath, -sp                  保存sourcemap的路径 (默认: ${process.cwd()}/sourcemap.zip)
+  Options:
+    --help, -h                                显示帮助文档.
+    --version, -v                             显示mini-ci版本.
+    --robot,-r                                指定使用哪一个 ci 机器人，可选值：1 ~ 30 (默认: 1)
+    --sourceMapSavePath, -sp                  保存sourcemap的路径 (默认: ${process.cwd()}/sourcemap.zip)
   `);
 }
 
-export default init;
+export default sourcemap;
