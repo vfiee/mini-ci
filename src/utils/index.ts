@@ -180,3 +180,55 @@ export function runError(opiton: ErrorOptions): void {
   console.log(chalk.red(opiton.message));
   process.exit(1);
 }
+
+export function isObject(value: any): boolean {
+  const type: string = typeof value;
+  return value !== null && type === "object";
+}
+
+export function compact(value: [] | object): [] | object {
+  if (Array.isArray(value)) {
+    return value.filter(Boolean);
+  }
+  if (!isObject(value)) return value;
+  let keys = Object.keys(value);
+  if (keys.length <= 0) return value;
+  let res = {};
+  for (let i = 0, len = keys.length; i < len; i++) {
+    let item = value[keys[i]];
+    if (Array.isArray(item) || isObject(item)) {
+      res[keys[i]] = compact(item);
+    } else if (!!item) {
+      res[keys[i]] = item;
+    }
+  }
+  return res;
+}
+
+export function flatCollection(
+  collection: object,
+  isDepth: boolean = false,
+  skipKeys?: string[]
+): object {
+  const _isObject = isObject(collection);
+  if (!_isObject) return collection;
+  const hasSkipKeys = skipKeys && skipKeys.length;
+  let res: BaseObject = {};
+  for (const key in collection) {
+    if (!hasOwnProperty.call(collection, key)) {
+      continue;
+    } else if (hasSkipKeys && skipKeys.includes(key)) {
+      res[key] = collection[key];
+      continue;
+    }
+    if (isDepth && isObject(collection[key])) {
+      res = {
+        ...res,
+        ...flatCollection(collection[key], isDepth, skipKeys),
+      };
+    } else {
+      res[key] = collection[key];
+    }
+  }
+  return res;
+}

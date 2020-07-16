@@ -1,30 +1,32 @@
-export interface ActionMap {
+export type ActionMap = {
   [key: string]: Function;
-}
+};
 
-export interface BaseObject {
+export type BaseObject = {
   [key: string]: any;
-}
+};
 
-export interface ConfigOptions {
+type MiniProjectType =
+  | "miniProgram"
+  | "miniProgramPlugin"
+  | "miniGame"
+  | "miniGamePlugin";
+
+export type ConfigOptions = {
   project: ProjectOptions;
   upload: UploadOptions;
   preview: PreviewOptions;
   build: BuildOptions;
   sourcemap: SourceMapOptions;
   showStatusLog?: boolean;
-}
-
-export interface GlobalConfig {
-  [key: string]: ConfigOptions | string;
-}
+};
 
 export interface ProjectOptions {
   appid: string;
   ignores?: string[];
   projectPath: string;
   privateKeyPath: string;
-  type: "miniProgram" | "miniProgramPlugin" | "miniGame" | "miniGamePlugin";
+  type: MiniProjectType;
 }
 
 export interface MiniCompileOption {
@@ -79,11 +81,12 @@ export interface UploadOptions extends BaseOptions {
   test?: boolean;
 }
 
+type QRcodeFormatType = "terminal" | "image" | "base64";
 export interface PreviewOptions extends BaseOptions {
   pagePath?: string;
   searchQuery: string;
   qrcodeOutputDest: string;
-  qrcodeFormat: "terminal" | "image" | "base64";
+  qrcodeFormat: QRcodeFormatType;
 }
 
 export interface BuildOptions {
@@ -98,3 +101,17 @@ export interface SourceMapOptions {
 export interface ErrorOptions {
   message: string;
 }
+
+export type PathData = {
+  path: string;
+  isRoot: boolean;
+};
+
+export type GlobalConfigOptions = Map<string, ConfigOptions | string>;
+
+type CheckError = {
+  error: boolean;
+  message: string;
+};
+
+export type CheckOptions = CheckError[];

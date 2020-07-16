@@ -5,7 +5,11 @@ import build, { logHelp as buildHelp } from "./command/build";
 import preview, { logHelp as previewHelp } from "./command/preview";
 import sourcemap, { logHelp as sourcemapHelp } from "./command/sourcemap";
 import upload, { logHelp as uploadHelp } from "./command/upload";
-import config, { Config, logHelp as configHelp } from "./command/config";
+import config, {
+  Config,
+  GlobalConfig,
+  logHelp as configHelp,
+} from "./command/config";
 import proxy from "./command/proxy";
 import { ActionMap } from "../types";
 import { get } from "../utils";
@@ -32,8 +36,11 @@ function init() {
     preview,
     sourcemap,
   };
-  let fn = get(actionMap, command);
-  fn ? fn(new Config(args, command === "config")) : cmdNotFound(command);
+  const fn = get(actionMap, command);
+  const isConfig = command === "config";
+  fn
+    ? fn(isConfig ? new GlobalConfig(args) : new Config(args))
+    : cmdNotFound(command);
 }
 
 function logVersion() {
