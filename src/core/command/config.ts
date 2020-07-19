@@ -578,13 +578,16 @@ Commands:
   get                          获取项目配置详情.
   delete                       删除对象项目配置.
   default                      显示当前默认配置详情.
+  export                       导出配置信息.
+  default                      显示或设置为默认配置.
+  clear                        清空项目配置.
 
 Options:
   --help, -h                   显示帮助文档.
   --version, -v                显示版本号.
   --name                       指定设置或获取配置的项目名称.
   --path                       指定设置项目配置的路径.
-  --default                    设为默认(仅set命令时生效).
+  --default                    设为默认(only for set).
 `);
 }
 function runConfig(_: GlobalConfig) {
