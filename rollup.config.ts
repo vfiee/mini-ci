@@ -4,6 +4,7 @@ import sourcemap from "rollup-plugin-sourcemaps";
 import typescript from "rollup-plugin-typescript2";
 import common from "@rollup/plugin-commonjs";
 import autoExternal from "rollup-plugin-auto-external";
+import { uglify } from "rollup-plugin-uglify";
 const pkg = require("./package.json");
 
 const banner = `/*!
@@ -29,5 +30,6 @@ export default {
     sourcemap(),
     common(),
     typescript({ useTsconfigDeclarationDir: true }),
+    uglify(),
   ],
 };
