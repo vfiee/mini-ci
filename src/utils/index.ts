@@ -1,6 +1,7 @@
 import os from "os";
-import { BaseObject, ErrorOptions } from "../types";
 import chalk from "chalk";
+import path from "path";
+import { BaseObject, ErrorOptions, CheckOptions } from "../types";
 
 export const hasOwnProperty: Function = Object.prototype.hasOwnProperty;
 const propsReg: RegExp = /[^.[\]\s]+|\[\d+\]+/g;
@@ -50,8 +51,8 @@ export function get(
  *
  */
 export function getLocalDate(): string {
-  let date = new Date();
-  let year = date.getFullYear(),
+  const date = new Date();
+  const year = date.getFullYear(),
     month = date.getMonth() + 1,
     day = date.getDate(),
     hours = date.getHours(),
@@ -232,3 +233,18 @@ export function flatCollection(
   }
   return res;
 }
+export function exitIfError(options: CheckOptions): void {
+  options.forEach((option) => {
+    const { error, message, fn } = option;
+    if (error) {
+      !!option.message && console.error(chalk.red(message));
+      process.exit(1);
+    }
+    fn && fn();
+  });
+}
+
+export const getAbsolutePath = (_path: string): string => {
+  if (!_path) return _path;
+  return path.isAbsolute(_path) ? _path : path.resolve(_path);
+};

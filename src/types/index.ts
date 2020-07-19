@@ -112,6 +112,12 @@ export type GlobalConfigOptions = Map<string, ConfigOptions | string>;
 type CheckError = {
   error: boolean;
   message: string;
+  fn?: Function;
 };
 
 export type CheckOptions = CheckError[];
+
+export enum ProjectJsonType {
+  ProjectJson = "package.json",
+  MiniConfigJson = "project.config.json",
+}

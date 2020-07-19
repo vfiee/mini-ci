@@ -6,7 +6,6 @@ import createProject from "../project";
 
 function sourcemap(confIns: Config) {
   const { sourcemap, project } = confIns.config;
-  console.log(confIns);
   const mini_project = createProject(project);
   const spinner = ora().start(chalk.yellow(`拉取sourcemap中... \n`));
   let code: number;
@@ -17,7 +16,7 @@ function sourcemap(confIns: Config) {
     .then(() => {
       code = 0;
       spinner.succeed(
-        chalk.yellow(`ourcemap拉取成功! 路径:${confIns.cwd}/sourcemap.zip`)
+        chalk.yellow(`sourcemap拉取成功! 路径: ${sourcemap.sourceMapSavePath}`)
       );
     })
     .catch((err) => {

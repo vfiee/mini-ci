@@ -1,7 +1,6 @@
 import { Project } from "miniprogram-ci";
 import { ProjectOptions } from "../types";
-function createProject(option: ProjectOptions): Project {
-  return new Project(option);
-}
+
+const createProject = (option: ProjectOptions): Project => new Project(option);
 
 export default createProject;
