@@ -133,8 +133,9 @@ export class Config {
     this.projectPath = projectPath;
   }
   private getRootPathDefConfig() {
+    let { name } = this.envArgs;
     let globalConf = new GlobalConfig({ _: [] });
-    return globalConf.getProjectConfig();
+    return globalConf.getProjectConfig(name);
   }
   private mergeConfig(config: BaseObject): ConfigOptions {
     return {
