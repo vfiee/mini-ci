@@ -1,6 +1,6 @@
 # mini-ci
 
-[![mini-ci compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
+[![mini-ci](https://img.shields.io/badge/npm-v1.0.0-success)](https://github.com/VFiee/mini-ci)
 
 mini-ci 基于[miniprogram-ci]()开发,用于以配置管理多个小程序项目.
 
@@ -30,7 +30,6 @@ mini-ci 基于[miniprogram-ci]()开发,用于以配置管理多个小程序项�
 - [使用许可](#license)
 
 ## 安装
-
 ### yarn
 
 ```bash
@@ -49,35 +48,35 @@ npm install mini-ci -g
 
 ### 项目配置
 
-|key|默认值|类型|必填|说明|
-|:-:|:-:|:-:|:-:|:-:|
-|`appid`|项目里 `project.config.json` 的 `appid` 字段|`string`|否|小程序或小游戏的 `appid`|
-|`projectPath`|无|`string`|是|项目的绝对路径<br>A.指定路径<br>1.绝对路径<br>2.不是绝对路径,则根据当前路径(`pwd`)生成绝对路径<br> B.不指定路径<br>1.查找当前路径下是否有配置文件<br>2.查找全局配置文件<br>|
-|`privateKeyPath`|无|`string`|是|小程序或小游戏 私钥绝对路径|
-|`type`|`miniProgram`|string|否|当前项目类型,有效值 `miniProgram`/`miniProgramPlugin`/`miniGame`/`miniGamePlugin`|
-|`ignores`|无|`string[]`|否|指定忽略的规则|
-|`version`|项目及其上级三层目录的`package.json`里的`version`|`string`|是|自定义版本号|
-|`desc`|当前本地时间|`string`|否|自定义备注信息|
-|`robot`|1|`number`|否|指定CI机器人,可选值`1~30` 上传成功后将显示:ci机器人1|
-|`qrcodeFormat`|`terminal`|`string`|否|预览返回二维码文件格式,可选值: `image`/`base64`/`terminal`|
-|`qrcodeOutputDest`|当前项目|`string`|否|当`qrcodeFormat`为`image`或`base64`时,文件默认保存到当前项目|
-|`pagePath`|无|string|否|预览页面路径|
-|`searchQuery`|无|string|否|预览页面启动参数|
-|`sourceMapSavePath`|当前项目`soucemap.zip`|string|否|保存sourcemap的绝对路径|
+|key|默认值|env|类型|必填|说明|
+|:-:|:-:|:-:|:-:|:-:|:-:|
+|`appid`|项目里 `project.config.json` 的 `appid` 字段|`appid` / `id`|`string`|否|小程序或小游戏的 `appid`|
+|`projectPath`|无|`projectPath` / `proPath`|`string`|是|项目的绝对路径<br>A.指定路径<br>1.绝对路径<br>2.不是绝对路径,则根据当前路径(`pwd`)生成绝对路径<br> B.不指定路径<br>1.查找当前路径下是否有配置文件<br>2.查找全局配置文件<br>|
+|`privateKeyPath`|无|`privateKeyPath` / `priPath`|`string`|是|小程序或小游戏 私钥绝对路径|
+|`type`|`miniProgram`|`type` / `t`|`string`|否|当前项目类型,有效值 `miniProgram`/`miniProgramPlugin`/`miniGame`/`miniGamePlugin`|
+|`ignores`|无|`ignores` / `ig`|`string[]`|否|指定忽略的规则|
+|`version`|项目及其上级三层目录的`package.json`里的`version`|`ver`|`string`|是|自定义版本号|
+|`desc`|当前本地时间|`desc` / `d`|`string`|否|自定义备注信息|
+|`robot`|1|`robot` / `b`|`number`|否|指定CI机器人,可选值`1~30` 上传成功后将显示:ci机器人1|
+|`qrcodeFormat`|`terminal`|`qrcodeFormat` / `qrFormat`/`qrf`|`string`|否|预览返回二维码文件格式,可选值: `image`/`base64`/`terminal`|
+|`qrcodeOutputDest`|当前项目|`qrcodeOutputDest`/`qrDest` / `qrd`|`string`|否|当`qrcodeFormat`为`image`或`base64`时,文件默认保存到当前项目|
+|`pagePath`|无|`pagePath` / `pp` / `p`|string|否|预览页面路径|
+|`searchQuery`|无|`searchQuery` / `sq` / `q`|string|否|预览页面启动参数|
+|`sourceMapSavePath`|当前项目下`soucemap.zip`|`sourceMapSavePath` / `sp`|string|否|保存sourcemap的绝对路径|
 
 
 
 ### 编译配置
-|key|默认值|类型|必填|说明|
-|:-:|:-:|:-:|:-:|:-:|
-|`es6`|无|`boolean`|否|启用es6|
-|`es7`|无|`boolean`|否|启用es7|
-|`minify`|无|`boolean`|否|启用压缩代码|
-|`codeProtect`|无|`boolean`|否|启用代码混淆|
-|`minifyJS`|无|`boolean`|否|启用压缩JS|
-|`minifyWXML`|无|`boolean`|否|启用压缩XWML|
-|`minifyWXSS`|无|`boolean`|否|启用压缩WXSS|
-|`autoPrefixWXSS`|无|`boolean`|否|启用自动补全WXSS|
+|key|默认值|env|类型|必填|说明|
+|:-:|:-:|:-:|:-:|:-:|:-:|
+|`es6`|无|`es6`|`boolean`|否|启用es6|
+|`es7`|无|`es7`|`boolean`|否|启用es7|
+|`minify`|无|`minify`|`boolean`|否|启用压缩代码|
+|`codeProtect`|无|`codeProtect`|`boolean`|否|启用代码混淆|
+|`minifyJS`|无|`minifyJS`|`boolean`|否|启用压缩JS|
+|`minifyWXML`|无|`minifyWXML`|`boolean`|否|启用压缩XWML|
+|`minifyWXSS`|无|`minifyWXSS`|`boolean`|否|启用压缩WXSS|
+|`autoPrefixWXSS`|无|`autoPrefixWXSS`|`boolean`|否|启用自动补全WXSS|
 
 ## 示例
 ```jsonc

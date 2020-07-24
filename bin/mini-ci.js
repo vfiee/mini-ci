@@ -1,2 +1,2 @@
 #!/usr/bin/env node
-require("../dist/v-mini-ci.js");
+require("../dist/mini-ci.js");
