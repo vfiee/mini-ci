@@ -2,7 +2,7 @@
 
 [![mini-ci](https://img.shields.io/badge/npm-v1.0.0-success)](https://github.com/VFiee/mini-ci)
 
-mini-ci 基于[miniprogram-ci]()开发,用于以配置管理多个小程序项目.
+mini-ci 基于[miniprogram-ci](https://www.npmjs.com/package/miniprogram-ci)开发,用于以配置管理多个小程序项目.
 
 ## Table of Contents
 
@@ -33,13 +33,13 @@ mini-ci 基于[miniprogram-ci]()开发,用于以配置管理多个小程序项�
 ### yarn
 
 ```bash
-yarn global add mini-ci
+yarn global add @vyron/mini-ci
 ```
 
 ### npm
 
 ```bash
-npm install mini-ci -g
+npm install @vyron/mini-ci -g
 ```
 
 ## 配置
