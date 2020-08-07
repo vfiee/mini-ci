@@ -1,6 +1,7 @@
 # mini-ci
 
-[![mini-ci](https://img.shields.io/badge/npm-v1.0.0-success)](https://github.com/VFiee/mini-ci)
+[![license](https://img.shields.io/npm/l/@vyron/mini-ci)](https://github.com/VFiee/mini-ci)
+[![npm version](https://img.shields.io/npm/v/@vyron/mini-ci.svg)](https://github.com/VFiee/mini-ci)
 
 mini-ci 基于[miniprogram-ci](https://www.npmjs.com/package/miniprogram-ci)开发,用于以配置管理多个小程序项目.
 
