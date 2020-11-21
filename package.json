@@ -1,10 +1,10 @@
 {
-  "name": "@vyron/mini-ci",
+  "name": "ci",
   "version": "1.0.0",
   "main": "dist/mini-ci.js",
   "types": "dist/lib/types/index.d.ts",
   "bin": {
-    "mini-ci": "bin/mini-ci.js"
+    "ci": "bin/mini-ci.js"
   },
   "files": [
     "bin",
@@ -12,12 +12,52 @@
   ],
   "author": "vyron",
   "license": "MIT",
+  "scripts": {
+    "pre-build": "rimraf dist",
+    "dev": "yarn pre-build && rollup -c -w",
+    "build": "yarn pre-build && tsc -m commonjs && rollup -c",
+    "release": "node scripts/release",
+    "lint": "eslint src/**/*.ts --max-warnings 0",
+    "prettier": "prettier src/**/*.ts --write",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s && prettier CHANGELOG.md --write"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "node scripts/verifyCommit.js"
+    }
+  },
+  "lint-staged": {
+    "*.{ts}": [
+      "yarn lint",
+      "yarn prettier"
+    ],
+    "*.{md}": "yarn prettier"
+  },
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "minimist": "^1.2.5",
+    "miniprogram-ci": "^1.0.45",
+    "ora": "^4.0.4"
+  },
   "devDependencies": {
+    "@rollup/plugin-alias": "^3.1.1",
     "@rollup/plugin-commonjs": "^13.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^8.1.0",
     "@types/minimist": "^1.2.0",
+    "@typescript-eslint/eslint-plugin": "^4.8.1",
+    "@typescript-eslint/parser": "^4.8.1",
+    "conventional-changelog-cli": "^2.1.1",
+    "eslint": "^7.14.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.1.0",
     "husky": "^4.2.5",
+    "prettier": "^2.2.0",
     "rimraf": "^3.0.2",
     "rollup": "^2.19.0",
     "rollup-plugin-auto-external": "^2.0.0",
@@ -25,21 +65,5 @@
     "rollup-plugin-typescript2": "^0.27.1",
     "rollup-plugin-uglify": "^6.0.4",
     "typescript": "^3.9.6"
-  },
-  "scripts": {
-    "pre-build": "rimraf dist",
-    "dev": "yarn pre-build && rollup -c rollup.config.ts -w",
-    "build": "yarn pre-build && tsc -m commonjs && rollup -c rollup.config.ts"
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "node scripts/verifyCommit.js"
-    }
-  },
-  "dependencies": {
-    "chalk": "^4.1.0",
-    "minimist": "^1.2.5",
-    "miniprogram-ci": "^1.0.45",
-    "ora": "^4.0.4"
   }
 }

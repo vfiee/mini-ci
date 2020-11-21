@@ -1,15 +1,15 @@
 import ora from "ora";
 import chalk from "chalk";
-import { packNpm as mini_build } from "miniprogram-ci";
+import { packNpm as miniBuild } from "miniprogram-ci";
 import { Config } from "./config";
 import createProject from "../project";
 
 function build(confIns: Config) {
   const { build, project } = confIns.config;
-  const mini_project = createProject(project);
+  const miniProject = createProject(project);
   const spinner = ora().start(chalk.yellow(`项目构建中... \n`));
   let code;
-  mini_build(mini_project, {
+  miniBuild(miniProject, {
     ...build,
     reporter: function (...args) {
       console.log(`构建信息:`, ...args, "\n");

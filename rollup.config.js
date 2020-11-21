@@ -5,6 +5,8 @@ import typescript from "rollup-plugin-typescript2";
 import common from "@rollup/plugin-commonjs";
 import autoExternal from "rollup-plugin-auto-external";
 import { uglify } from "rollup-plugin-uglify";
+import alias from "@rollup/plugin-alias";
+
 const pkg = require("./package.json");
 
 const banner = `/*!
@@ -24,12 +26,17 @@ export default {
   },
   external: ["miniprogram-ci", "path", "tty", "os"],
   plugins: [
-    json(),
-    autoExternal(),
     resolve(),
-    sourcemap(),
     common(),
+    json(),
+    alias({
+      core: "./src/core",
+      command: "./src/core/command",
+      utils: "./src/utils",
+    }),
+    autoExternal(),
     typescript({ useTsconfigDeclarationDir: true }),
+    sourcemap(),
     uglify(),
   ],
 };

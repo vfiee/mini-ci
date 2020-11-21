@@ -11,7 +11,7 @@ import {
   exitIfError,
   getAbsolutePath,
   getLocalDate,
-} from "../../utils";
+} from "utils";
 import {
   ConfigOptions,
   BaseObject,
@@ -22,8 +22,12 @@ import {
   SourceMapOptions,
   PathData,
   GlobalConfigOptions,
-  ProjectJsonType,
 } from "../../types";
+
+enum ProjectJsonType {
+  ProjectJson = "package.json",
+  MiniConfigJson = "project.config.json",
+}
 
 const CWD: string = process.cwd();
 const ROOT_CONFIG_PATH: string = `${getUserHomeDir()}/.mini-ci.json`;
@@ -37,6 +41,7 @@ export class Config {
     this.isRoot = envArgs._.length === 0;
     this.config = this.getConfig(this.getPath());
   }
+
   get baseConfig(): BaseObject {
     return Object.assign(
       {},
@@ -44,17 +49,18 @@ export class Config {
       getValueByKeys(this.envArgs, [["showProgressLog", "spl"]])
     );
   }
+
   private getPath(): PathData {
-    let { file, f } = this.envArgs;
-    let file_path = file || f;
-    if (file_path) {
-      file_path = getAbsolutePath(file || f);
-      if (fs.existsSync(file_path)) {
-        return { isRoot: false, path: file_path };
+    const { file, f } = this.envArgs;
+    let filePath = file || f;
+    if (filePath) {
+      filePath = getAbsolutePath(file || f);
+      if (fs.existsSync(filePath)) {
+        return { isRoot: false, path: filePath };
       }
       console.log(
         chalk.yellow(
-          `Warn: The specified configuration path ${file_path} does not exist!`
+          `Warn: The specified configuration path ${filePath} does not exist!`
         )
       );
     }
@@ -73,7 +79,7 @@ export class Config {
     let isRoot: boolean;
     let finnalPath: string;
     for (let i = 0, len = searchPaths.length; i < len; i++) {
-      let { path: _path, message, isRoot: _isRoot } = searchPaths[i];
+      const { path: _path, message, isRoot: _isRoot } = searchPaths[i];
       if (!_path || !fs.existsSync(_path) || path.extname(_path) !== ".json") {
         console.log(chalk.yellow(message));
         continue;
@@ -95,8 +101,9 @@ export class Config {
       path: finnalPath,
     };
   }
+
   private getConfig(options: PathData): ConfigOptions {
-    let { isRoot, path } = options;
+    const { isRoot, path } = options;
     let config: BaseObject;
     exitIfError([
       {
@@ -119,6 +126,7 @@ export class Config {
     this.setProjectPath(config.projectPath);
     return this.mergeConfig(config);
   }
+
   private setProjectPath(projectPath: string) {
     exitIfError([
       {
@@ -132,11 +140,13 @@ export class Config {
     ]);
     this.projectPath = projectPath;
   }
+
   private getRootPathDefConfig() {
-    let { name } = this.envArgs;
-    let globalConf = new GlobalConfig({ _: [] });
+    const { name } = this.envArgs;
+    const globalConf = new GlobalConfig({ _: [] });
     return globalConf.getProjectConfig(name);
   }
+
   private mergeConfig(config: BaseObject): ConfigOptions {
     return {
       project: this.getProjectConfig(config),
@@ -146,8 +156,9 @@ export class Config {
       sourcemap: this.getSourcemapConfig(config),
     };
   }
+
   private getProjectConfig(config: BaseObject): ProjectOptions {
-    let { appid, type, projectPath, privateKeyPath } = config;
+    const { appid, type, projectPath, privateKeyPath } = config;
     return Object.assign(
       {},
       this.getDefProjectCof(),
@@ -161,6 +172,7 @@ export class Config {
       ])
     ) as ProjectOptions;
   }
+
   private getUploadConfig(config: BaseObject): UploadOptions {
     const { version, desc, robot } = config;
     return Object.assign(
@@ -180,6 +192,7 @@ export class Config {
       ])
     ) as UploadOptions;
   }
+
   private getPreviewConfig(config: BaseObject): PreviewOptions {
     const {
       desc,
@@ -211,16 +224,18 @@ export class Config {
       ])
     ) as PreviewOptions;
   }
+
   private getBuildConfig(config: BaseObject): BuildOptions {
-    let { ignores } = config;
+    const { ignores } = config;
     return Object.assign(
       this.getDefBuildConf(),
       compact({ ignores }),
       getValueByKeys(this.envArgs, ["ignores"])
     ) as BuildOptions;
   }
+
   private getSourcemapConfig(config: BaseObject): SourceMapOptions {
-    let { robot, sourceMapSavePath } = config;
+    const { robot, sourceMapSavePath } = config;
     return Object.assign(
       {},
       this.getDefSourcemapConf(),
@@ -231,8 +246,9 @@ export class Config {
       ])
     ) as SourceMapOptions;
   }
+
   private getSettingsConfig(config: BaseObject): BaseObject {
-    let { setting = {} } = config;
+    const { setting = {} } = config;
     return compact({
       ...setting,
       ...getValueByKeys(this.envArgs, [
@@ -247,7 +263,8 @@ export class Config {
       ]),
     });
   }
-  private getJson(type: ProjectJsonType): BaseObject {
+
+  private getJson(type: typeof ProjectJsonType): BaseObject {
     let count: number = 0;
     const SERCH_MAX = 3;
     const searchJson = (): BaseObject => {
@@ -267,25 +284,29 @@ export class Config {
     };
     return searchJson();
   }
+
   private getDefBaseConf(): BaseObject {
     return {
       // 是否显示上传或预览的进度log
       showProgressLog: false,
     };
   }
+
   private getDefProjectCof(): BaseObject {
     const { appid = "" } = this.getJson(ProjectJsonType.MiniConfigJson);
     return { appid, type: "miniProgram" };
   }
+
   private getDefUploadConf(): BaseObject {
     const { version = "" } = this.getJson(ProjectJsonType.ProjectJson);
-    let res: BaseObject = { robot: 1 };
+    const res: BaseObject = { robot: 1 };
     if (!this.isRoot) {
-      res["desc"] = `${getLocalDate()} 上传`;
-      version && (res["version"] = version);
+      res.desc = `${getLocalDate()} 上传`;
+      version && (res.version = version);
     }
     return res;
   }
+
   private getDefPreviewConf(): BaseObject {
     const { qrcodeFormat } = getValueByKeys([
       ["qrcodeFormat", "qrFormat", "qrf"],
@@ -295,18 +316,20 @@ export class Config {
       qrcodeFormat: qrcodeFormat || "terminal",
     };
     if (!this.isRoot) {
-      res["desc"] = `${getLocalDate()} 预览`;
+      res.desc = `${getLocalDate()} 预览`;
     }
     if (!!qrcodeFormat && qrcodeFormat !== "terminal") {
-      res["qrcodeOutputDest"] = `${this.projectPath}/${
+      res.qrcodeOutputDest = `${this.projectPath}/${
         qrcodeFormat === "base64" ? `preview-base64` : `preview.jpg`
       }`;
     }
     return res;
   }
+
   private getDefBuildConf(): BaseObject {
     return {};
   }
+
   private getDefSourcemapConf(): BaseObject {
     const { sourceMapSavePath = "" } = getValueByKeys([
       ["sourceMapSavePath", "sp"],
@@ -322,20 +345,25 @@ export class GlobalConfig {
   envArgs: ParsedArgs;
   private defKey: string;
   private config: GlobalConfigOptions;
+
   constructor(args: ParsedArgs) {
     this.envArgs = args;
     this.defKey = "_default";
     this.config = this.init();
   }
+
   get isEmpty(): boolean {
     return this.config.size === 0;
   }
+
   get defaultProjectName(): string {
     return this.config.get(this.defKey) as string;
   }
+
   private init(): GlobalConfigOptions {
     return this.getGlobalConfigFile();
   }
+
   private getGlobalConfigFile(): GlobalConfigOptions {
     if (!fs.existsSync(ROOT_CONFIG_PATH)) this.createEmptyGlobalConfigFile();
     let globalFileData: BaseObject;
@@ -346,29 +374,33 @@ export class GlobalConfig {
     }
     return this.jsonToMap(globalFileData);
   }
+
   private createEmptyGlobalConfigFile(): void {
     fs.writeFileSync(ROOT_CONFIG_PATH, "{}");
   }
+
   private jsonToMap(data: BaseObject): GlobalConfigOptions {
     const keys = Object.keys(data);
-    let map = new Map();
+    const map = new Map();
     if (!keys) return map;
     for (const key in data) {
       map.set(key, data[key]);
     }
     return map;
   }
+
   private mapToJson(data: GlobalConfigOptions): BaseObject {
     if (!(data instanceof Map))
       runError({
         message: `Expect to accept Map, but received ${typeof data}`,
       });
-    let res: BaseObject = {};
+    const res: BaseObject = {};
     data.forEach((value, key) => {
       res[key] = value;
     });
     return res;
   }
+
   private saveToFile(
     path?: string,
     data?: BaseObject,
@@ -381,6 +413,7 @@ export class GlobalConfig {
     callback && callback();
     process.exit(0);
   }
+
   private isDefaultProject(projectName: string): boolean {
     return (
       projectName &&
@@ -388,6 +421,7 @@ export class GlobalConfig {
       projectName === this.defaultProjectName
     );
   }
+
   getProjectConfig(projectName?: string, message?: string): ConfigOptions {
     exitIfError([
       {
@@ -403,6 +437,7 @@ export class GlobalConfig {
       projectName || this.defaultProjectName
     ) as ConfigOptions;
   }
+
   ls() {
     exitIfError([
       {
@@ -410,7 +445,7 @@ export class GlobalConfig {
         message: `Project configuration is empty, please try again after configuration`,
       },
     ]);
-    let datas: string[] = [];
+    const datas: string[] = [];
     this.config.forEach((data, key: string) => {
       if (key === this.defKey) return;
       key = this.isDefaultProject(key) ? `${chalk.green("*")}${key} ` : key;
@@ -418,8 +453,9 @@ export class GlobalConfig {
     });
     console.log(datas.join("\n \n"));
   }
+
   set(_name?: string) {
-    let { name, n, default: isDef, def, path, p } = this.envArgs;
+    const { name, n, default: isDef, def, path, p } = this.envArgs;
     const projectName: string = _name || name || n;
     const isDefault: boolean = isDef || def;
     const filePath: string = getAbsolutePath(path || p);
@@ -444,8 +480,9 @@ export class GlobalConfig {
     console.log(chalk.green(`Project ${projectName} configuration succeeded!`));
     this.saveToFile();
   }
+
   get(_name?: string) {
-    let { name, n } = this.envArgs;
+    const { name, n } = this.envArgs;
     const projectName = _name || name || n;
     exitIfError([
       {
@@ -472,8 +509,9 @@ export class GlobalConfig {
     );
     process.exit(0);
   }
+
   delete() {
-    let { name, n } = this.envArgs;
+    const { name, n } = this.envArgs;
     const projectName = name || n;
     exitIfError([
       {
@@ -496,13 +534,15 @@ export class GlobalConfig {
     console.log(chalk.green(`Project ${projectName} deleted successfully!`));
     this.saveToFile();
   }
+
   clear() {
     this.config.clear();
     console.log(chalk.green(`Configuration cleared successfully!`));
     this.saveToFile();
   }
+
   default() {
-    let { name, n } = this.envArgs;
+    const { name, n } = this.envArgs;
     const projectName = name || n;
     exitIfError([
       {
@@ -530,8 +570,9 @@ export class GlobalConfig {
       this.get(this.defaultProjectName);
     }
   }
+
   export() {
-    let { name, n, path: _path, p } = this.envArgs;
+    const { name, n, path: _path, p } = this.envArgs;
     const projectName = name || n;
     let exportPath = _path || p;
     exitIfError([
@@ -592,7 +633,7 @@ Options:
 `);
 }
 function runConfig(_: GlobalConfig) {
-  let command = _.envArgs._[1];
+  const command = _.envArgs._[1];
   if (!command) {
     logHelp();
     process.exit(0);

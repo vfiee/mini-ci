@@ -1,17 +1,17 @@
 import chalk from "chalk";
 import minimist from "minimist";
-import build, { logHelp as buildHelp } from "./command/build";
-import preview, { logHelp as previewHelp } from "./command/preview";
-import sourcemap, { logHelp as sourcemapHelp } from "./command/sourcemap";
-import upload, { logHelp as uploadHelp } from "./command/upload";
+import build, { logHelp as buildHelp } from "command/build";
+import preview, { logHelp as previewHelp } from "command/preview";
+import sourcemap, { logHelp as sourcemapHelp } from "command/sourcemap";
+import upload, { logHelp as uploadHelp } from "command/upload";
 import config, {
   Config,
   GlobalConfig,
   logHelp as logConfigHelp,
-} from "./command/config";
-import proxy from "./command/proxy";
+} from "command/config";
+import proxy from "command/proxy";
 import { ActionMap } from "../types";
-import { get } from "../utils";
+import { get } from "utils";
 
 const args = minimist(process.argv.slice(2));
 const command = args._[0];
@@ -20,10 +20,10 @@ const _version = chalk.yellow(
 );
 
 function init() {
-  const { help: v_help, h, version, v } = args;
-  if (!command || version || v || v_help || h) {
+  const { help: vHelp, h, version, v } = args;
+  if (!command || version || v || vHelp || h) {
     (version || v) && logVersion();
-    (v_help || h || !command) && logHelp(command);
+    (vHelp || h || !command) && logHelp(command);
     process.exit(0);
   }
   const actionMap: ActionMap = {
@@ -59,7 +59,7 @@ function logHelp(cmd: string) {
 }
 
 function cmdNotFound(cmd: string) {
-  console.error(
+  console.log(
     chalk.red(`Unknown Command: '${cmd}'
   try the mini-ci -h command to see the supported commands
   `)
@@ -82,8 +82,8 @@ Commands:
 Options:
   --help, -h                   显示帮助文档.
   --version, -v                显示mini-ci版本.
-  --file, -f                   指定配置文件(json)路径,如果未指定,默认取当前工作目录下的mini-ci.json
-                               文件. 未找到则尝试获取全局配置.
+  --file, -f                   指定配置文件路径,如果未指定,则根据以下顺序查找,若全部没有,则查找全局配置,没有则报错!
+                               查找顺序: minicirc mini-ci.json minici.json package.json下的minici字段
   `);
 }
 

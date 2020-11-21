@@ -12,15 +12,6 @@ type MiniProjectType =
   | "miniGame"
   | "miniGamePlugin";
 
-export type ConfigOptions = {
-  project: ProjectOptions;
-  upload: UploadOptions;
-  preview: PreviewOptions;
-  build: BuildOptions;
-  sourcemap: SourceMapOptions;
-  showStatusLog?: boolean;
-};
-
 export interface ProjectOptions {
   appid: string;
   ignores?: string[];
@@ -107,8 +98,6 @@ export type PathData = {
   isRoot: boolean;
 };
 
-export type GlobalConfigOptions = Map<string, ConfigOptions | string>;
-
 type CheckError = {
   error: boolean;
   message: string;
@@ -117,7 +106,13 @@ type CheckError = {
 
 export type CheckOptions = CheckError[];
 
-export enum ProjectJsonType {
-  ProjectJson = "package.json",
-  MiniConfigJson = "project.config.json",
-}
+export type ConfigOptions = {
+  project: ProjectOptions;
+  upload: UploadOptions;
+  preview: PreviewOptions;
+  build: BuildOptions;
+  sourcemap: SourceMapOptions;
+  showStatusLog?: boolean;
+};
+
+export type GlobalConfigOptions = Map<string, ConfigOptions | string>;
