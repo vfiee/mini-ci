@@ -1,6 +1,6 @@
 {
   "name": "@vyron/mini-ci",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "dist/mini-ci.js",
   "types": "dist/lib/types/index.d.ts",
   "bin": {
