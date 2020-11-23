@@ -180,13 +180,6 @@ const publishToGithub = async () => {
   progress("🎉🎉🎉Pushing to GitHub success!");
 };
 
-const publishMiniProgram = async () => {
-  const execCwd = path.resolve(__dirname, "../example");
-  const version = getPkg("version");
-  await run("yarn", ["build"], { cwd: execCwd });
-  await run("yarn", ["pub", "-d", `release ${version}`], { cwd: execCwd });
-};
-
 const release = () =>
   checkCurrentBranch()
     .then(chooseVersion)
@@ -194,7 +187,6 @@ const release = () =>
     .then(generateChanlog)
     .then(commitChanges)
     .then(publishPackage)
-    .then(publishToGithub)
-    .then(publishMiniProgram);
+    .then(publishToGithub);
 
 release().catch((err) => console.log("\n" + chalk.red(err)));
