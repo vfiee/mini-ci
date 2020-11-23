@@ -11,6 +11,7 @@ import {
   exitIfError,
   getAbsolutePath,
   getLocalDate,
+  getRcConfig,
 } from "utils";
 import {
   ConfigOptions,
@@ -22,15 +23,35 @@ import {
   SourceMapOptions,
   PathData,
   GlobalConfigOptions,
-} from "../../types";
+} from "types";
 
 enum ProjectJsonType {
   ProjectJson = "package.json",
   MiniConfigJson = "project.config.json",
 }
 
-const CWD: string = process.cwd();
 const ROOT_CONFIG_PATH: string = `${getUserHomeDir()}/.mini-ci.json`;
+const SEARCH_CONFIG_PATHS: Array<PathData> = [
+  {
+    src: ".minicirc",
+  },
+  {
+    src: "mini-ci.json",
+  },
+  {
+    src: "minici.json",
+  },
+  {
+    src: "package.json",
+  },
+  {
+    src: "mini-ci.js",
+  },
+  {
+    src: ROOT_CONFIG_PATH,
+    isRoot: true,
+  },
+];
 export class Config {
   envArgs: ParsedArgs;
   config: ConfigOptions;
@@ -50,76 +71,88 @@ export class Config {
     );
   }
 
+  /**
+   * 按照顺序加载配置
+   * json
+   * mini-ci.json>minici.json>minicirc>package.json/mini-ci字段
+   *
+   * others(require)
+   * mini-ci.js>mini-ci.ts
+   *
+   */
   private getPath(): PathData {
     const { file, f } = this.envArgs;
     let filePath = file || f;
     if (filePath) {
+      // 自定义路径
       filePath = getAbsolutePath(file || f);
       if (fs.existsSync(filePath)) {
-        return { isRoot: false, path: filePath };
+        return { isRoot: false, src: filePath };
       }
       console.log(
         chalk.yellow(
-          `Warn: The specified configuration path ${filePath} does not exist!`
+          `Warn: The specified config path ${filePath} does not exist!`
         )
       );
     }
-    const _projectPath = `${CWD}/mini-ci.json`;
-    const searchPaths: BaseObject[] = [
-      {
-        path: _projectPath,
-        message: `Warn: The configuration path ${_projectPath} does not exist!`,
-      },
-      {
-        isRoot: true,
-        path: ROOT_CONFIG_PATH,
-        message: `Warn: The configuration path ${ROOT_CONFIG_PATH} does not exist!`,
-      },
-    ];
-    let isRoot: boolean;
-    let finnalPath: string;
-    for (let i = 0, len = searchPaths.length; i < len; i++) {
-      const { path: _path, message, isRoot: _isRoot } = searchPaths[i];
-      if (!_path || !fs.existsSync(_path) || path.extname(_path) !== ".json") {
-        console.log(chalk.yellow(message));
-        continue;
+    // 查找路径
+    let projectPath: PathData;
+    for (let i = 0; i < SEARCH_CONFIG_PATHS.length; i++) {
+      console.log(
+        `fs.existsSync(${getAbsolutePath(SEARCH_CONFIG_PATHS[i].src)}):`,
+        fs.existsSync(getAbsolutePath(SEARCH_CONFIG_PATHS[i].src))
+      );
+      const obsPath = getAbsolutePath(SEARCH_CONFIG_PATHS[i].src);
+      if (fs.existsSync(obsPath)) {
+        if (
+          SEARCH_CONFIG_PATHS[i].src === "package.json" &&
+          typeof require(obsPath)["mini-ci"] !== "object"
+        ) {
+          continue;
+        }
+        projectPath = SEARCH_CONFIG_PATHS[i];
+        break;
       }
-      isRoot = _isRoot;
-      finnalPath = _path;
-      break;
     }
-    if (!finnalPath) {
+    if (!projectPath) {
       console.log(
         chalk.red(
-          `The configuration file path does not exist, please try again after configuration!`
+          `Error: The config file was not found, please try again after configuration!`
         )
       );
       process.exit(1);
     }
-    return {
-      isRoot,
-      path: finnalPath,
-    };
+    return projectPath;
   }
 
   private getConfig(options: PathData): ConfigOptions {
-    const { isRoot, path } = options;
+    const { isRoot, src } = options;
     let config: BaseObject;
-    exitIfError([
-      {
-        error: !path || !fs.existsSync(path),
-        message: `Can't read the config path:${path}`,
-      },
-    ]);
+    const getConfigContent = (src) => {
+      const configExtName = path.extname(src);
+      const absPath = getAbsolutePath(src);
+      // const isJsonConfig = src === "minicirc" || configExtName === "json";
+      const isJsConfig = configExtName === "js" || configExtName === "ts";
+      const config =
+        src === ".minicirc" ? getRcConfig(absPath) : require(absPath);
+      console.log(`absPath:`, absPath);
+      console.log(`config:`, config);
+
+      return isJsConfig
+        ? config
+        : src === "package.json"
+        ? config["mini-ci"]
+        : config;
+    };
     try {
       config = isRoot
         ? flatCollection(this.getRootPathDefConfig(), true, ["setting"])
-        : require(path);
+        : getConfigContent(src);
     } catch (error) {
       exitIfError([
         {
           error: true,
-          message: `Can't read the config path:${path}`,
+          message: `Can't read the config path:${path}\n${error}`,
         },
       ]);
     }
@@ -135,7 +168,7 @@ export class Config {
       },
       {
         error: !fs.existsSync(projectPath),
-        message: `The configured project path ${projectPath} does not exist!`,
+        message: `The configured projectPath ${projectPath} does not exist!`,
       },
     ]);
     this.projectPath = projectPath;
@@ -159,18 +192,20 @@ export class Config {
 
   private getProjectConfig(config: BaseObject): ProjectOptions {
     const { appid, type, projectPath, privateKeyPath } = config;
-    return Object.assign(
+    const projectConfig = Object.assign(
       {},
       this.getDefProjectCof(),
       compact({ appid, type, projectPath, privateKeyPath }),
       getValueByKeys(this.envArgs, [
         ["appid", "id"],
         ["projectPath", "proPath"],
-        ["privateKeyPath", "priPath"],
+        ["privateKeyPath", "keyPath"],
         ["type", "t"],
         ["ignores", "ig"],
       ])
     ) as ProjectOptions;
+    console.log(`projectConfig:`, projectConfig);
+    return projectConfig;
   }
 
   private getUploadConfig(config: BaseObject): UploadOptions {
@@ -264,7 +299,7 @@ export class Config {
     });
   }
 
-  private getJson(type: typeof ProjectJsonType): BaseObject {
+  private getJson(type: ProjectJsonType): BaseObject {
     let count: number = 0;
     const SERCH_MAX = 3;
     const searchJson = (): BaseObject => {

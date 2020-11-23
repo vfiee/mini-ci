@@ -83,7 +83,7 @@ Options:
   --help, -h                   显示帮助文档.
   --version, -v                显示mini-ci版本.
   --file, -f                   指定配置文件路径,如果未指定,则根据以下顺序查找,若全部没有,则查找全局配置,没有则报错!
-                               查找顺序: minicirc mini-ci.json minici.json package.json下的minici字段
+                               查找顺序: .minicirc mini-ci.json minici.json package.json下的mini-ci字段 mini-ci.js
   `);
 }
 

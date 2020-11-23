@@ -33,6 +33,7 @@ export default {
       core: "./src/core",
       command: "./src/core/command",
       utils: "./src/utils",
+      types: "./src/types",
     }),
     autoExternal(),
     typescript({ useTsconfigDeclarationDir: true }),

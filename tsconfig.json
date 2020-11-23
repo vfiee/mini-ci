@@ -33,6 +33,9 @@
       "utils": [
         "src/utils/index.ts"
       ],
+      "types": [
+        "src/types/index.ts"
+      ]
     }
   },
   "include": [
