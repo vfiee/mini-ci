@@ -36,6 +36,9 @@ export function logHelp() {
     --help, -h                                显示帮助文档.
     --version, -v                             显示mini-ci版本.
     --igno                                    构建npm忽略的规则
+    
+  Preset:
+    --name                       项目名称(全局配置)
   `);
 }
 

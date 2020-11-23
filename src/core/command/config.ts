@@ -98,10 +98,6 @@ export class Config {
     // 查找路径
     let projectPath: PathData;
     for (let i = 0; i < SEARCH_CONFIG_PATHS.length; i++) {
-      console.log(
-        `fs.existsSync(${getAbsolutePath(SEARCH_CONFIG_PATHS[i].src)}):`,
-        fs.existsSync(getAbsolutePath(SEARCH_CONFIG_PATHS[i].src))
-      );
       const obsPath = getAbsolutePath(SEARCH_CONFIG_PATHS[i].src);
       if (fs.existsSync(obsPath)) {
         if (
@@ -135,8 +131,6 @@ export class Config {
       const isJsConfig = configExtName === "js" || configExtName === "ts";
       const config =
         src === ".minicirc" ? getRcConfig(absPath) : require(absPath);
-      console.log(`absPath:`, absPath);
-      console.log(`config:`, config);
 
       return isJsConfig
         ? config

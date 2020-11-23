@@ -1,6 +1,6 @@
 import ora from "ora";
 import chalk from "chalk";
-import { preview as mini_preview } from "miniprogram-ci";
+import { preview as miniPreview } from "miniprogram-ci";
 import { Config } from "./config";
 import { getLocalDate, get } from "../../utils";
 import createProject from "../project";
@@ -9,14 +9,15 @@ import { PreviewOptions } from "../../types";
 
 function preview(confIns: Config): void {
   const { preview, project } = confIns.config;
-  const mini_project = createProject(project);
+  const minProject = createProject(project);
   const spinner = ora().start(chalk.yellow(`项目上传中... \n`));
   let code: number;
-  mini_preview({
-    project: mini_project,
+  miniPreview({
+    project: minProject,
     ...preview,
     onProgressUpdate: (eve) =>
       onProgressUpdate(
+        // eslint-disable-next-line no-undef
         eve as MiniProgramCI.ITaskStatus,
         !!confIns.baseConfig.showStatusLog
       ),
@@ -37,7 +38,7 @@ function preview(confIns: Config): void {
 }
 
 function getPreviewSuccessMsg(config: PreviewOptions) {
-  let { qrcodeFormat, qrcodeOutputDest } = config;
+  const { qrcodeFormat, qrcodeOutputDest } = config;
   return get(
     {
       terminal: `请扫描终端二维码体验`,
@@ -70,6 +71,9 @@ export function logHelp() {
     --minifyWXML                              开启压缩WXML代码.
     --minifyWXSS                              开启压缩WXSS代码.
     --autoPrefixWXSS                          开启自动补全WXSS.
+
+  Preset:
+    --name                       项目名称(全局配置)
   `);
 }
 
