@@ -1,7 +1,8 @@
 import os from "os";
 import chalk from "chalk";
 import path from "path";
-import { BaseObject, ErrorOptions, CheckOptions } from "../types";
+import fs from "fs";
+import { BaseObject, ErrorOptions, CheckOptions } from "types";
 
 export const hasOwnProperty: Function = Object.prototype.hasOwnProperty;
 const propsReg: RegExp = /[^.[\]\s]+|\[\d+\]+/g;
@@ -247,4 +248,14 @@ export function exitIfError(options: CheckOptions): void {
 export const getAbsolutePath = (_path: string): string => {
   if (!_path) return _path;
   return path.isAbsolute(_path) ? _path : path.resolve(_path);
+};
+
+export const getRcConfig = (src: string): BaseObject => {
+  let config: BaseObject;
+  try {
+    config = JSON.parse(fs.readFileSync(src, "utf-8"));
+  } catch (error) {
+    config = {};
+  }
+  return config;
 };

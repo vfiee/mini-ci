@@ -75,6 +75,9 @@ export function logHelp() {
     --minifyWXML                 开启压缩WXML代码.
     --minifyWXSS                 开启压缩WXSS代码.
     --autoPrefixWXSS             开启自动补全WXSS.
+  
+  Preset:
+    --name                       项目名称(全局配置)
   `);
 }
 

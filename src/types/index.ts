@@ -94,8 +94,8 @@ export interface ErrorOptions {
 }
 
 export type PathData = {
-  path: string;
-  isRoot: boolean;
+  src: string;
+  isRoot?: boolean;
 };
 
 type CheckError = {

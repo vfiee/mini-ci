@@ -25,7 +25,7 @@ const releaseTypes = [
   "premajor", // 预发主版本
   "preminor", // 预发次版本
   "prepatch", // 预发补丁版本
-  "prerelease" // 预发行版本
+  "prerelease", // 预发行版本
 ];
 // env
 const isTest = !!args.test;
@@ -40,7 +40,7 @@ const preId =
 
 // 打印进度
 let progressCount = 0;
-const progress = s => {
+const progress = (s) => {
   progressCount++;
   console.log(chalk.green(`progress[${progressCount}]: ${s}\n`));
   return {};
@@ -53,7 +53,7 @@ const run = (bin, args, opts = {}) =>
     : progress(`${bin} ${args.join(" ")}`);
 
 // 递增版本
-const incVersion = t => semver.inc(currentVersion, t, preId);
+const incVersion = (t) => semver.inc(currentVersion, t, preId);
 
 // 获取最新版本
 const getPkg = (key, jsonPath = pkgPath) => {
@@ -62,7 +62,7 @@ const getPkg = (key, jsonPath = pkgPath) => {
 };
 
 // 更新版本号
-const updateVersion = version => {
+const updateVersion = (version) => {
   progress("Updating package version");
   // 更新项目版本号
   const pkg = getPkg();
@@ -80,8 +80,8 @@ const chooseVersion = async () => {
       type: "select",
       message: "select release type please!",
       choices: releaseTypes
-        .map(type => `${type} (${incVersion(type)})`)
-        .concat(["custom"])
+        .map((type) => `${type} (${incVersion(type)})`)
+        .concat(["custom"]),
     });
     if (type === "custom") {
       targetVersion = (
@@ -89,7 +89,7 @@ const chooseVersion = async () => {
           type: "input",
           name: "version",
           message: "input custom version please!",
-          initial: currentVersion
+          initial: currentVersion,
         })
       ).version;
     } else {
@@ -103,7 +103,7 @@ const chooseVersion = async () => {
   const { isRelease } = await prompt({
     type: "confirm",
     name: "isRelease",
-    message: `Are you sure to release version ${targetVersion}`
+    message: `Are you sure to release version ${targetVersion}`,
   });
   if (!isRelease) {
     throw new Error(`Release version ${targetVersion} is canceled!`);
@@ -120,7 +120,7 @@ const generateChanlog = () => {
 // 提交修改文件
 const commitChanges = async () => {
   const { stdout } = await run("git", ["diff", "--ignore-submodules"], {
-    stdio: "pipe"
+    stdio: "pipe",
   });
   const version = getPkg("version");
   if (stdout) {
@@ -141,7 +141,7 @@ const publishPackage = async () => {
       "yarn",
       ["publish", "--new-version", version, "--access", "public"],
       {
-        stdio: "pipe"
+        stdio: "pipe",
       }
     );
     progress(`Successfully published ${name}@${version}`);
@@ -153,11 +153,11 @@ const publishPackage = async () => {
 // 检测当前分支
 const checkCurrentBranch = async () => {
   const { stdout: branch } = await run("git", ["branch", "--show-current"], {
-    stdio: "pipe"
+    stdio: "pipe",
   });
   if (!["master", "main"].includes(branch) && !isTest) {
     throw new Error(
-      "Release branch must be main, please checkout main branch and try it again!"
+      "Release branch must be main or master, please checkout main branch and try it again!"
     );
   }
   return branch;
@@ -167,7 +167,7 @@ const checkCurrentBranch = async () => {
 const publishToGithub = async () => {
   progress("Pushing to GitHub...");
   const { stdout: remote } = await run("git", ["remote"], {
-    stdio: "pipe"
+    stdio: "pipe",
   });
   if (!remote && !isTest) {
     throw new Error("Pushing remote is empty!");
@@ -180,13 +180,6 @@ const publishToGithub = async () => {
   progress("🎉🎉🎉Pushing to GitHub success!");
 };
 
-const publishMiniProgram = async () => {
-  const execCwd = path.resolve(__dirname, "../example");
-  const version = getPkg("version");
-  await run("yarn", ["build"], { cwd: execCwd });
-  await run("yarn", ["pub", "-d", `release ${version}`], { cwd: execCwd });
-};
-
 const release = () =>
   checkCurrentBranch()
     .then(chooseVersion)
@@ -194,7 +187,6 @@ const release = () =>
     .then(generateChanlog)
     .then(commitChanges)
     .then(publishPackage)
-    .then(publishToGithub)
-    .then(publishMiniProgram);
+    .then(publishToGithub);
 
-release().catch(err => console.log("\n" + chalk.red(err)));
+release().catch((err) => console.log("\n" + chalk.red(err)));
